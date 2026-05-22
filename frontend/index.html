@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Apply theme before paint to avoid a flash of the wrong color scheme. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('rezerveo-theme');
+          var isDark = stored
+            ? stored === 'dark'
+            : !window.matchMedia('(prefers-color-scheme: light)').matches;
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Primary meta -->
+    <title>Rezerveo — Booking Platform for Service Businesses</title>
+    <meta
+      name="description"
+      content="Rezerveo is the all-in-one booking platform for barbershops, salons, physiotherapy clinics, and every appointment-driven business. Feature-based pricing. No per-user fees. Ever."
+    />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="canonical" href="https://rezerveo.al/" />
+
+    <!-- Icons / manifest -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rezerveo" />
+    <meta property="og:title" content="Rezerveo — Booking Platform for Service Businesses" />
+    <meta
+      property="og:description"
+      content="Appointments, managed. Revenue, protected. The all-in-one booking platform for appointment-driven businesses — feature-based pricing, no per-user fees."
+    />
+    <meta property="og:url" content="https://rezerveo.al/" />
+    <meta property="og:image" content="https://rezerveo.al/og-image.svg" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Rezerveo — Booking Platform for Service Businesses" />
+    <meta
+      name="twitter:description"
+      content="Appointments, managed. Revenue, protected. Feature-based pricing. No per-user fees. Ever."
+    />
+    <meta name="twitter:image" content="https://rezerveo.al/og-image.svg" />
+
+    <!-- Fonts: Montserrat (incl. 200 ExtraLight) + Quicksand fallback for the display face -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Rezerveo",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web, On-premises",
+        "description": "All-in-one booking platform for appointment-driven service businesses.",
+        "offers": {
+          "@type": "AggregateOffer",
+          "priceCurrency": "EUR",
+          "lowPrice": "499",
+          "highPrice": "1499"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

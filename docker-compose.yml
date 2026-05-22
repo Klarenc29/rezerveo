@@ -1,0 +1,72 @@
+# ============================================================
+# Rezerveo (marketing landing site) — full stack orchestration
+#   backend  : Express + Nodemailer API (TypeScript -> compiled JS)
+#   frontend : Vite build served by nginx, reverse-proxies /api -> backend
+#
+# Joins the pre-existing external "rezerveo" Docker network so it can reach
+# shared services on that network (e.g. the maildev container "mail_dev").
+#
+# Container names are suffixed with "-landing" to avoid colliding with the
+# existing rezerveo-frontend / rezerveo-backoffice (appointment app) containers.
+#
+# Run:  docker compose up --build
+# Open: http://localhost:3000   (API published on :5000)
+# ============================================================
+
+services:
+  rezerveo-landing-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: rezerveo-landing-api:latest
+    container_name: rezerveo-landing-api
+    restart: unless-stopped
+    env_file:
+      # Optional: the API boots with sane defaults if this file is absent
+      # (the booking endpoint returns 503 until SMTP_* is configured).
+      - path: ./backend/.env
+        required: false
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${BACKEND_PORT:-5000}
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    networks:
+      - rezerveo
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  rezerveo-landing-web:
+    build:
+      # Root context so the image can bake in the top-level nginx/default.conf.
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_URL: /api
+    image: rezerveo-landing-web:latest
+    container_name: rezerveo-landing-web
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      rezerveo-landing-api:
+        condition: service_healthy
+    networks:
+      - rezerveo
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:80/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+# Pre-existing network created outside this compose project.
+# Create it once with:  docker network create rezerveo
+networks:
+  rezerveo:
+    external: true
+    name: rezerveo
